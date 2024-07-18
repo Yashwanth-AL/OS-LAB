@@ -1,3 +1,9 @@
+/*
+8. a. Write a program with two threads and a main thread. Schedule the task of calculating the natural sum upto 'n' terms and factorial of 'n' on these threads.
+Note: The main thread should read 'n' from command line and pass it as parameter to remaining threads. Terminate the threads using system calls.
+*/
+
+
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
