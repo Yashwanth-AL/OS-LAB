@@ -1,0 +1,20 @@
+Enter the number of processes:
+5
+Enter the arrival time, burst time and priority of the process:
+AT BT P
+0 3 3
+1 4 2
+2 6 4
+3 4 6
+5 2 10
+
+Gantt Chart:
+| P1(1) 1| P2(1) 2| P2(1) 3| P2(1) 4| P2(1) 5| P1(1) 6| P1(1) 7| P3(1) 8| P3(1) 9| P3(1) 10| P3(1) 11| P3(1) 12| P3(1) 13| P4(1) 14| P4(1) 15| P4(1) 16| P4(1) 17| P5(1) 18| P5(1) 19|
+PID AT BT CT TAT WT P
+1 0 3 7 7 4 3
+2 1 4 5 4 0 2
+3 2 6 13 11 5 4
+4 3 4 17 14 10 6
+5 5 2 19 14 12 10
+Average TAT = 10.00
+Average WT = 6.20
