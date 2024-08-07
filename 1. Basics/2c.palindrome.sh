@@ -6,8 +6,7 @@ read str1
 length=${#str1}
 str2=""
 
-for (( i=$length-1; i>=0; i-- ))
-do
+for (( i=$length-1; i>=0; i-- )); do
 str2="${str2}${str1:i:1}"
 done
 
