@@ -1,26 +1,31 @@
-/* Program to stimulate the grep command of the Linux operating system. It finds the required
-   pattern in the given file and prints the lines with the pattern to the console. */
+/* Program to stimulate the grep command of the Linux operating system. It finds the required pattern in the given file and prints the lines with the pattern to the console. */
+
 // Simulation of "grep" command
+
 #include <stdio.h>
 #include <string.h>
 
-void main() {
-    char fn[10], pat[10], temp[200];
+int main() {
+    char filename[100], pattern[100], temp[200];
     FILE *fp;
 
     printf("Enter file name: ");
-    scanf("%s", fn);
+    scanf("%99s", filename);  
     printf("Enter pattern to be searched: ");
-    scanf("%s", pat);
+    scanf("%99s", pattern); 
 
-    fp = fopen(fn, "r");
-    while (!feof(fp)) {
-        // fgets(char *str, int n, FILE *stream) reads a line from the specified stream and stores it into
-        // the string pointed to by str. It stops when either (n-1) characters are read, the newline
-        // character is read, or the end-of-file is reached, whichever comes first.
-        fgets(temp, 100, fp);
-        if (strstr(temp, pat)) // Finds the first occurrence of the substring in the string
-            printf("%s", temp);
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        perror("Error opening file : ");
+        return 1;
     }
+
+    while (fgets(temp, sizeof(temp), fp) != NULL) {
+        if (strstr(temp, pattern) != NULL) {
+            printf("%s", temp);
+        }
+    }
+
     fclose(fp);
+    return 0;
 }
