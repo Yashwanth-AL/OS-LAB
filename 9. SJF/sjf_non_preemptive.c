@@ -67,12 +67,12 @@ void sjfNP(Process p[], int n) {
             int temp = elapsedTime;
             p[exec].responseTime = elapsedTime - p[exec].arrivalTime;
             elapsedTime += p[exec].burstTime;
-            p[exec].finished = 1;
             p[exec].completionTime = elapsedTime;
-            remainingProcesses--;
             p[exec].turnAroundTime = p[exec].completionTime - p[exec].arrivalTime;
             p[exec].waitingTime = p[exec].turnAroundTime - p[exec].burstTime;
             printf("|(%d) P%d (%d)", temp, p[exec].processId, elapsedTime);
+            remainingProcesses--;
+            p[exec].finished = 1;
         }
     }
     printf("\nPID \tAT \tBT \tCT \tTT \tWT \tRT\n");

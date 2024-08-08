@@ -35,7 +35,7 @@ int main() {
 }
 
 void sjfPreemptive(Process p[], int n) {
-    int timeProgress[100], processTrack[100], j = -1, k = -1;
+    int time[100], process[100], j = -1, k = -1;
     float avgWaitingTime = 0;
     float avgTurnAroundTime = 0;
     float avgResponseTime = 0;
@@ -44,7 +44,8 @@ void sjfPreemptive(Process p[], int n) {
     int totalResponseTime = 0;
     int elapsedTime = 0;
     int remainingProcesses = n;
-    timeProgress[++j] = 0;
+
+    time[++j] = 0;
 
     while (remainingProcesses) {
         int exec = -1; // 'exec' will store the index of the process that'll be selected
@@ -58,9 +59,9 @@ void sjfPreemptive(Process p[], int n) {
             }
         }
         if (exec == -1) {
-            processTrack[++k] = 0;
+            process[++k] = 0;
             elapsedTime++;
-            timeProgress[++j] = elapsedTime;
+            time[++j] = elapsedTime;
             continue;
         }
         if (p[exec].remainingTime == p[exec].burstTime) { // first cpu allocation
@@ -69,8 +70,8 @@ void sjfPreemptive(Process p[], int n) {
         p[exec].remainingTime--;
         elapsedTime++;
 
-        processTrack[++k] = p[exec].processId;
-        timeProgress[++j] = elapsedTime;
+        process[++k] = p[exec].processId;
+        time[++j] = elapsedTime;
         if (p[exec].remainingTime == 0) { // process has been executed
             p[exec].completionTime = elapsedTime;
             p[exec].turnAroundTime = p[exec].completionTime - p[exec].arrivalTime;
@@ -96,12 +97,12 @@ void sjfPreemptive(Process p[], int n) {
 
     printf("\nGantt Chart\n(P0-->idle time)\n");
     for (int i = 0; i <= k; i++)
-        printf("| P%d\t", processTrack[i]);
+        printf("| P%d\t", process[i]);
 
     printf("|\n");
 
     for (int i = 0; i <= j; i++)
-        printf("%d\t", timeProgress[i]);
+        printf("%d\t", time[i]);
 
     printf("\n");
     printf("\nAverage Waiting Time: %.2f\n", avgWaitingTime);
