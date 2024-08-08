@@ -3,8 +3,10 @@
 #include <unistd.h>
 #include <pthread.h>
 
-// Global variable to store the value of 'n'
-int n;
+// Structure to pass parameters to threads
+typedef struct {
+    int n;
+} Node;
 
 // Global variables to store results
 int sum_result = 0;
@@ -12,6 +14,8 @@ unsigned long long factorial_result = 1;
 
 // Function to calculate sum
 void *calculate_sum(void *arg) {
+    Node *data = (Node *)arg;
+    int n = data->n;
     printf("[Thread 1] Calculating the sum of natural numbers up to %d...\n", n);
     sum_result = (n * (n + 1)) / 2;
     printf("[Thread 1] Sum calculated: %d\n", sum_result);
@@ -20,6 +24,8 @@ void *calculate_sum(void *arg) {
 
 // Function to calculate factorial
 void *calculate_factorial(void *arg) {
+    Node *data = (Node *)arg;
+    int n = data->n;
     printf("[Thread 2] Calculating the factorial of %d...\n", n);
     factorial_result = 1;
     for (int i = 1; i <= n; i++) {
@@ -35,7 +41,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    n = atoi(argv[1]);
+    int n = atoi(argv[1]);
     if (n < 0) {
         printf("Error: Please enter a non-negative integer.\n");
         return 1;
@@ -46,13 +52,16 @@ int main(int argc, char *argv[]) {
 
     pthread_attr_init(&attr);
 
+    Node data;
+    data.n = n;
+
     // Create threads
-    if (pthread_create(&thread1, &attr, calculate_sum, NULL) != 0) {
+    if (pthread_create(&thread1, &attr, calculate_sum, (void *)&data) != 0) {
         perror("Failed to create thread1");
         return 1;
     }
 
-    if (pthread_create(&thread2, &attr, calculate_factorial, NULL) != 0) {
+    if (pthread_create(&thread2, &attr, calculate_factorial, (void *)&data) != 0) {
         perror("Failed to create thread2");
         return 1;
     }
