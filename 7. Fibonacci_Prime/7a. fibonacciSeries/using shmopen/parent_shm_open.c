@@ -12,8 +12,6 @@
 
 int main(int argc, char *argv[]) {
     int i;
-    pid_t pid;
-    const int SIZE = 4096;
     int shm_fd;
     void *ptr;
 
@@ -28,14 +26,14 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    pid = fork();
+    pid_t pid = fork();
     if (pid == 0) { // CHILD
         execlp("./fib", "fib", argv[1], NULL);
     } else if (pid > 0) {
         wait(NULL);
         printf("\nPARENT: child completed\n");
         shm_fd = shm_open("VSS", O_RDONLY, 0666);
-        ptr = mmap(0, SIZE, PROT_READ, MAP_SHARED, shm_fd, 0);
+        ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, shm_fd, 0);
         printf("Parent printing:\n");
         printf("%s ", (char *)ptr);
         shm_unlink("VSS");

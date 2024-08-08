@@ -17,24 +17,24 @@ int main() {
     int n;
     printf("Enter the number of processes: ");
     scanf("%d", &n);
-    Process processes[n];
+    Process p[n];
     
     // Accept process details from the user
     for (int i = 0; i < n; i++) {
         printf("Process %d\n", i + 1);
         printf("Enter Arrival Time: ");
-        scanf("%d", &processes[i].arrivalTime);
+        scanf("%d", &p[i].arrivalTime);
         printf("Enter Burst Time: ");
-        scanf("%d", &processes[i].burstTime);
-        processes[i].processId = i + 1;
-        processes[i].remainingTime = processes[i].burstTime; // creating copy of burst time
+        scanf("%d", &p[i].burstTime);
+        p[i].processId = i + 1;
+        p[i].remainingTime = p[i].burstTime; // creating copy of burst time
         printf("\n");
     }
-    sjfPreemptive(processes, n);
+    sjfPreemptive(p, n);
     return 0;
 }
 
-void sjfPreemptive(Process processes[], int n) {
+void sjfPreemptive(Process p[], int n) {
     int timeProgress[100], processTrack[100], j = -1, k = -1;
     float avgWaitingTime = 0;
     float avgTurnAroundTime = 0;
@@ -50,9 +50,9 @@ void sjfPreemptive(Process processes[], int n) {
         int exec = -1; // 'exec' will store the index of the process that'll be selected
         int shortestBurstTime = 9999;
         for (int i = 0; i < n; i++) {
-            if (processes[i].arrivalTime <= elapsedTime && processes[i].remainingTime > 0) {
-                if (processes[i].remainingTime < shortestBurstTime) {
-                    shortestBurstTime = processes[i].remainingTime;
+            if (p[i].arrivalTime <= elapsedTime && p[i].remainingTime > 0) {
+                if (p[i].remainingTime < shortestBurstTime) {
+                    shortestBurstTime = p[i].remainingTime;
                     exec = i;
                 }
             }
@@ -63,21 +63,21 @@ void sjfPreemptive(Process processes[], int n) {
             timeProgress[++j] = elapsedTime;
             continue;
         }
-        if (processes[exec].remainingTime == processes[exec].burstTime) { // first cpu allocation
-            processes[exec].responseTime = elapsedTime - processes[exec].arrivalTime;
+        if (p[exec].remainingTime == p[exec].burstTime) { // first cpu allocation
+            p[exec].responseTime = elapsedTime - p[exec].arrivalTime;
         }
-        processes[exec].remainingTime--;
+        p[exec].remainingTime--;
         elapsedTime++;
 
-        processTrack[++k] = processes[exec].processId;
+        processTrack[++k] = p[exec].processId;
         timeProgress[++j] = elapsedTime;
-        if (processes[exec].remainingTime == 0) { // process has been executed
-            processes[exec].completionTime = elapsedTime;
-            processes[exec].turnAroundTime = processes[exec].completionTime - processes[exec].arrivalTime;
-            processes[exec].waitingTime = processes[exec].turnAroundTime - processes[exec].burstTime;
-            totalTurnAroundTime += processes[exec].turnAroundTime;
-            totalWaitingTime += processes[exec].waitingTime;
-            totalResponseTime += processes[exec].responseTime;
+        if (p[exec].remainingTime == 0) { // process has been executed
+            p[exec].completionTime = elapsedTime;
+            p[exec].turnAroundTime = p[exec].completionTime - p[exec].arrivalTime;
+            p[exec].waitingTime = p[exec].turnAroundTime - p[exec].burstTime;
+            totalTurnAroundTime += p[exec].turnAroundTime;
+            totalWaitingTime += p[exec].waitingTime;
+            totalResponseTime += p[exec].responseTime;
             remainingProcesses--;
         }
     }
@@ -88,10 +88,10 @@ void sjfPreemptive(Process processes[], int n) {
     
     printf("Observation Table\nPID \tAT \tBT \tCT \tTT \tWT \tRT\n");
     for (int i = 0; i < n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\n", processes[i].processId, 
-               processes[i].arrivalTime, processes[i].burstTime, 
-               processes[i].completionTime, processes[i].turnAroundTime, 
-               processes[i].waitingTime, processes[i].responseTime);
+        printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p[i].processId, 
+               p[i].arrivalTime, p[i].burstTime, 
+               p[i].completionTime, p[i].turnAroundTime, 
+               p[i].waitingTime, p[i].responseTime);
     }
 
     printf("\nGantt Chart\n(P0-->idle time)\n");

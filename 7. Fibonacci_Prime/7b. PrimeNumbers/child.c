@@ -11,14 +11,14 @@
 #include <math.h>
 
 
-int main(int arguementCount, char *arguementVector[]) {
+int main(int argc, char *argv[]) {
     void *ptr;
-    int sharedMemoryFileDescriptor = shm_open("VSS", O_CREAT | O_RDWR, 0666);
-    ftruncate(sharedMemoryFileDescriptor, 4096);
-    ptr = mmap(0, 4096, PROT_WRITE, MAP_SHARED, sharedMemoryFileDescriptor, 0);
+    int shm_fd = shm_open("VSS", O_CREAT | O_RDWR, 0666);
+    ftruncate(shm_fd, 4096);
+    ptr = mmap(0, 4096, PROT_WRITE, MAP_SHARED, shm_fd, 0);
     printf("CHILD:\n");
-    int i = atoi(arguementVector[1]);
-    int j = atoi(arguementVector[2]);
+    int i = atoi(argv[1]);
+    int j = atoi(argv[2]);
     int flag = 0;
     printf("The prime numbers in the range %d and %d are:\n", i, j);
     for (int num = i; num < j; num++) {

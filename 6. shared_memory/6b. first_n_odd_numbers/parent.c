@@ -20,7 +20,7 @@ int main() {
     scanf("%d", &shm_ptr->n);
     pid_t child_pid;
     if ((child_pid = fork()) == 0) {
-        execlp("./child", "./child", NULL); // Child
+        execlp("./child", "./child", NULL); // execute list of programs
     } else {
         wait(NULL);
         printf("[PARENT] Child finished executing.\n");

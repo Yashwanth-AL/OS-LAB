@@ -8,7 +8,7 @@
 #define BUFFER_SIZE 30
 
 int main() {
-    int fd = open("myfile", O_RDWR), n;
+    int fd = open("./file.txt", O_RDWR), n;
     char buffer[BUFFER_SIZE];
     printf("File descriptor is %d\n", fd);
     if (fd == -1) {
