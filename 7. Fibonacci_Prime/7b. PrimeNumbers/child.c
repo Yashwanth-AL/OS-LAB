@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     int j = atoi(argv[2]);
     int flag = 0;
     printf("The prime numbers in the range %d and %d are:\n", i, j);
-    for (int num = i; num < j; num++) {
+    for (int num = i; num <= j; num++) {
         flag = 0;
         for (int k = 2; k <= num / 2; k++) {
             if (num % k == 0) {

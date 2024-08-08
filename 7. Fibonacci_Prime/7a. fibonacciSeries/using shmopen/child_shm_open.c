@@ -13,10 +13,9 @@
 
 int main(int argc, char *argv[]) {
     int k = 2, n1, n2, n3;
-    void *ptr;
     int shm_fd = shm_open("VSS", O_CREAT | O_RDWR, 0666);  //file descriptor
     ftruncate(shm_fd, 4096);  // file truncate - sets the size of the shared memory
-    ptr = mmap(0, 4096, PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    void *ptr = mmap(0, 4096, PROT_WRITE, MAP_SHARED, shm_fd, 0);
     //0 - starting address (may be chosen by the processor)
     //PROT_WRITE - protection for writing 
     printf("CHILD:\n");

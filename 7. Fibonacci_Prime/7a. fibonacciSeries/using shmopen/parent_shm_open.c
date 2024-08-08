@@ -12,8 +12,6 @@
 
 int main(int argc, char *argv[]) {
     int i;
-    int shm_fd;
-    void *ptr;
 
     if (argc > 1) {
         sscanf(argv[1], "%d", &i);
@@ -32,8 +30,8 @@ int main(int argc, char *argv[]) {
     } else if (pid > 0) {
         wait(NULL);
         printf("\nPARENT: child completed\n");
-        shm_fd = shm_open("VSS", O_RDONLY, 0666);
-        ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, shm_fd, 0);
+        int shm_fd = shm_open("VSS", O_RDONLY, 0666);
+        void *ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, shm_fd, 0);
         printf("Parent printing:\n");
         printf("%s ", (char *)ptr);
         shm_unlink("VSS");
