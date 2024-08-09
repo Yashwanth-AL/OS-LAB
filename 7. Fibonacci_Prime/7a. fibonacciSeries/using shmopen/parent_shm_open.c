@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
     pid_t pid = fork();
     if (pid == 0) { // CHILD
-        execlp("./fib", "fib", argv[1], NULL);
+        execlp("./child", "child", argv[1], NULL);
     } else if (pid > 0) {
         wait(NULL);
         printf("\nPARENT: child completed\n");
