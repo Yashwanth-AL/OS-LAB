@@ -40,6 +40,7 @@ int main() {
 }
 
 void priorityScheduling(Process p[], int n) {
+    int time[100], process[100], j = -1, k = -1;
     int totalWaitingTime = 0;
     int totalTurnAroundTime = 0;
     int totalResponseTime = 0;
@@ -48,13 +49,12 @@ void priorityScheduling(Process p[], int n) {
     float avgResponseTime = 0;
     int elapsedTime = 0;
     int remainingProcesses = n;
-    int time[100], process[100], j = -1, k = -1;
 
-    time[++j] = 0;  // Starting time is 0
+    time[++j] = 0;  
 
     printf("\nGantt Chart:\n\n");
 
-    while (remainingProcesses > 0) {
+    while (remainingProcesses) {
         int exec = -1;
         int minPriority = 9999;
 

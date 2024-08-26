@@ -4,11 +4,11 @@ typedef struct process {
     int processId;
     int arrivalTime;
     int burstTime;
-    int remainingTime;
     int completionTime;
     int turnAroundTime;
     int waitingTime;
     int responseTime;
+    int remainingTime;
 } Process;
 
 void sjfPreemptive(Process[], int);
@@ -68,11 +68,12 @@ void sjfPreemptive(Process p[], int n) {
             if (p[exec].remainingTime == p[exec].burstTime) { // first cpu allocation
                 p[exec].responseTime = elapsedTime - p[exec].arrivalTime;
             }
+            
             p[exec].remainingTime--;
-            elapsedTime++;
-
             process[++k] = p[exec].processId;
+            elapsedTime++;
             time[++j] = elapsedTime;
+
             if (p[exec].remainingTime == 0) { 
                 p[exec].completionTime = elapsedTime;
                 p[exec].turnAroundTime = p[exec].completionTime - p[exec].arrivalTime;
