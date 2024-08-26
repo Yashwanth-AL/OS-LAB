@@ -49,7 +49,7 @@ void priorityScheduling(Process p[], int n) {
 
     printf("\nGantt Chart:\n\n");
 
-    while (remainingProcesses > 0) {
+    while (remainingProcesses) {
         exec = -1;
         int minPriority = 9999;
 
