@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     //0 - starting address (may be chosen by the processor)
     //PROT_WRITE - protection for writing 
     printf("CHILD:\n");
-    int i = atoi(argv[1]); // ASCII to integer
+    int n = atoi(argv[1]); // ASCII to integer
     n1 = 0;
     n2 = 1;
     sprintf(ptr, "%d ", n1);
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     sprintf(ptr, "%d ", n2);
     ptr += strlen(ptr);
     printf("%d ", n2);
-    while (k != i) {
+    while (k != n) {
         n3 = n1 + n2;
         sprintf(ptr, "%d ", n3);
         printf("%d ", n3);
@@ -37,4 +37,6 @@ int main(int argc, char *argv[]) {
         ptr += strlen(ptr);
         k++;
     }
+    munmap(ptr, 4096); // Unmap shared memory
+    close(shm_fd); // Close shared memory file descriptor
 }

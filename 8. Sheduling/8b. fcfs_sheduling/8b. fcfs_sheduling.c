@@ -47,13 +47,13 @@ int main() {
 }
 
 void fcfs(Process p[], int n) {
-    int elapsedTime = 0;
     float avgWaitingTime = 0;
     float avgTurnAroundTime = 0;
     float avgResponseTime = 0;
     int totalWaitingTime = 0;
     int totalTurnAroundTime = 0;
     int totalResponseTime = 0;
+    int elapsedTime = 0;
 
     printf("\nGantt chart\n");
     for (int i = 0; i < n; i++) {

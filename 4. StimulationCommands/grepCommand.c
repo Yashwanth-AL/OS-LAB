@@ -7,14 +7,13 @@
 
 int main() {
     char filename[100], pattern[100], temp[200];
-    FILE *fp;
 
     printf("Enter file name: ");
     scanf("%99s", filename);  
     printf("Enter pattern to be searched: ");
     scanf("%99s", pattern); 
 
-    fp = fopen(filename, "r");
+    FILE *fp = fopen(filename, "r");
     if (fp == NULL) {
         perror("Error opening file : ");
         return 1;

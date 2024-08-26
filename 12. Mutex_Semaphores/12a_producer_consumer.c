@@ -18,9 +18,8 @@ pthread_mutex_t mutex;
 
 void *producer(void *pno)
 {
-    int item;
     for (int i = 0; i < MaxItems; i++) {
-        item = rand() % 100; // Produce a random item
+        int item = rand() % 100; // Produce a random item
         sem_wait(&empty);
         pthread_mutex_lock(&mutex);
         buffer[in] = item;

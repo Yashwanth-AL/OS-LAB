@@ -1,55 +1,40 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <sys/shm.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <math.h>
-#include <string.h>
+#include <stdio.h>          
+#include <stdlib.h>         
+#include <string.h>      
+#include <unistd.h>         
+#include <sys/shm.h>        
+#include <fcntl.h>          
+#include <sys/mman.h>       
 
 int main(int argc, char *argv[]) {
-    void *ptr;
-    int shm_fd = shm_open("VSS", O_CREAT | O_RDWR, 0666);
-    if (shm_fd == -1) {
-        perror("shm_open failed");
-        exit(1);
-    }
+    int shm_fd = shm_open("VSS", O_CREAT | O_RDWR, 0666);  
+    ftruncate(shm_fd, 4096);  
+    void *ptr = mmap(0, 4096, PROT_WRITE, MAP_SHARED, shm_fd, 0);
 
-    ftruncate(shm_fd, 4096); // Set size of shared memory
-    ptr = mmap(0, 4096, PROT_WRITE, MAP_SHARED, shm_fd, 0);
-    if (ptr == MAP_FAILED) {
-        perror("mmap failed");
-        exit(1);
-    }
+    int start = atoi(argv[1]);
+    int end = atoi(argv[2]);
 
-    int i = atoi(argv[1]);
-    int j = atoi(argv[2]);
-    int flag;
+    sprintf(ptr, "The prime numbers in the range %d and %d are:\n", start, end);
+    ptr += strlen(ptr);
 
-    sprintf(ptr, "The prime numbers in the range %d and %d are:\n", i, j); // Write header to shared memory
-    ptr += strlen(ptr); // Move pointer to the end of the written header
-
-    for (int num = i; num <= j; num++) {
-        flag = 0;
-        for (int k = 2; k <= num / 2; k++) {
-            if (num % k == 0) {
-                flag = 1;
+    for (int num = start; num <= end; num++) {
+        int is_prime = 1;
+        for (int i = 2; i <= num / 2; i++) {
+            if (num % i == 0) {
+                is_prime = 0;
                 break;
             }
         }
-        if (flag == 0) {
-            sprintf(ptr, "%d\t", num); // Write prime number to shared memory
-            ptr += strlen(ptr); // Move pointer to the end of the written number
+        if (is_prime && num > 1) {
+            sprintf(ptr, "%d\t", num);
+            ptr += strlen(ptr);
         }
     }
 
-    sprintf(ptr, "\n"); // Add a newline at the end
+    sprintf(ptr, "\n");
 
-    munmap(ptr, 4096); // Unmap shared memory
-    close(shm_fd); // Close shared memory file descriptor
+    munmap(ptr, 4096); 
+    close(shm_fd); 
 
     return 0;
 }

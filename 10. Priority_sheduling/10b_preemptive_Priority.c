@@ -5,12 +5,12 @@ typedef struct process {
     int processId;
     int arrivalTime;
     int burstTime;
-    int remainingTime;
     int completionTime;
     int turnAroundTime;
     int waitingTime;
     int responseTime;
     int priority;
+    int remainingTime;
 } Process;
 
 void priorityScheduling(Process[], int);
@@ -40,14 +40,14 @@ int main() {
 }
 
 void priorityScheduling(Process p[], int n) {
-    int elapsedTime = 0;
-    int remainingProcesses = n;
     int totalWaitingTime = 0;
     int totalTurnAroundTime = 0;
     int totalResponseTime = 0;
     float avgWaitingTime = 0;
     float avgTurnAroundTime = 0;
     float avgResponseTime = 0;
+    int elapsedTime = 0;
+    int remainingProcesses = n;
     int time[100], process[100], j = -1, k = -1;
 
     time[++j] = 0;  // Starting time is 0
@@ -78,8 +78,8 @@ void priorityScheduling(Process p[], int n) {
                 p[exec].responseTime = elapsedTime - p[exec].arrivalTime;
             }
             p[exec].remainingTime--;
-            elapsedTime++;
             process[++k] = p[exec].processId;
+            elapsedTime++;
             time[++j] = elapsedTime;
 
             if (p[exec].remainingTime == 0) {
