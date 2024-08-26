@@ -59,7 +59,7 @@ void roundRobinScheduling(Process p[], int n, int quantum) {
     int elapsedTime = p[0].arrivalTime;
 
     // Queue initialization
-    int waitQueue[15], front = 0, rear = 0;
+    int waitQueue[100], front = 0, rear = 0;
     waitQueue[rear++] = 0;
     p[0].flag = 1;
 
