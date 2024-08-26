@@ -2,97 +2,116 @@
 #include <stdlib.h>
 
 typedef struct process {
-    int Id, AT, BT, CT, TAT, WT, flag;
-} pro;
+    int processId;
+    int arrivalTime;
+    int burstTime;
+    int completionTime;
+    int turnAroundTime;
+    int waitingTime;
+    int responseTime;
+    int remainingTime;
+    int flag; //used to check whether the item is present in the queue or not
+} Process;
 
-pro p[15];
+void roundRobinScheduling(Process[], int, int);
 
-void swap(pro *a, pro *b) {
-    pro temp = *a;
-    *a = *b;
-    *b = temp;
-    return;
-}
+int main() {
+    int n, quantum;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+    Process p[n];
 
-void sort(int n) {
+    for (int i = 0; i < n; i++) {
+        printf("Process %d\n", i + 1);
+        printf("Enter Arrival Time: ");
+        scanf("%d", &p[i].arrivalTime);
+        printf("Enter Burst Time: ");
+        scanf("%d", &p[i].burstTime);
+        p[i].processId = i + 1;
+        p[i].remainingTime = p[i].burstTime;  
+        p[i].flag = 0;
+        p[i].responseTime = -1;  
+        printf("\n");
+    }
+
+    printf("Enter the time quantum: ");
+    scanf("%d", &quantum);
+
+    // Sort processes based on arrival time
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
-            if (p[j].AT > p[j + 1].AT) {
-                swap(&p[j], &p[j + 1]);
+            if (p[j].arrivalTime > p[j + 1].arrivalTime) {
+                Process temp = p[j];
+                p[j] = p[j + 1];
+                p[j + 1] = temp;
             }
         }
     }
+
+    roundRobinScheduling(p, n, quantum);
+    return 0;
 }
 
-void main() {
-    int n, tempBT[15], total_WT = 0, total_TAT = 0, quantum;
-    float avg_WT = 0, avg_TAT = 0;
+void roundRobinScheduling(Process p[], int n, int quantum) {
+    int totalWaitingTime = 0, totalTurnAroundTime = 0, totalResponseTime = 0;
+    float avgWaitingTime = 0, avgTurnAroundTime = 0, avgResponseTime = 0;
+    int remainingProcesses = n, exec;
+    int elapsedTime = p[0].arrivalTime;
 
-    printf("\nEnter the number of processes:\n");
-    scanf("%d", &n);
-    printf("\nEnter the arrival time and burst time of the process:\n");
-    printf("AT BT\n");
-
-    for (int i = 0; i < n; i++) {
-        p[i].Id = (i + 1);
-        scanf("%d%d", &p[i].AT, &p[i].BT);
-        tempBT[i] = p[i].BT;
-        p[i].flag = 0;
-    }
-
-    printf("\nEnter the time quantum:\n");
-    scanf("%d", &quantum);
-    sort(n);
-
-    // A queue is required for demonstrating this algorithm
-    int completed = 0, curIndex, curTime = p[0].AT, *waitQueue, front = 0, rear = 0;
-    waitQueue = (int *)malloc(n * sizeof(int));
-    waitQueue[rear] = 0;
+    // Queue initialization
+    int waitQueue[15], front = 0, rear = 0;
+    waitQueue[rear++] = 0;
     p[0].flag = 1;
 
-    while (completed != n) {
-        curIndex = waitQueue[front];
-        front = (front + 1) % n;
-
-        if (p[curIndex].BT > quantum) {
-            p[curIndex].BT -= quantum;
-            curTime += quantum;
-            printf("| P%d(%d) %d", p[curIndex].Id, quantum, curTime);
-        } else {
-            curTime += p[curIndex].BT;
-            printf("| P%d(%d) %d", p[curIndex].Id, p[curIndex].BT, curTime);
-            p[curIndex].BT = 0;
-            p[curIndex].CT = curTime;
-            p[curIndex].TAT = p[curIndex].CT - p[curIndex].AT;
-            total_TAT += p[curIndex].TAT;
-            p[curIndex].WT = p[curIndex].TAT - tempBT[p[curIndex].Id - 1];
-            total_WT += p[curIndex].WT;
+    // Round Robin Scheduling
+    printf("\nGantt Chart:\n\n");
+    while (remainingProcesses) {
+        exec = waitQueue[front++];
+        
+        if (p[exec].responseTime == -1) {
+            p[exec].responseTime = elapsedTime - p[exec].arrivalTime;
         }
 
-        for (int i = 0; i < n && p[i].AT <= curTime; i++) {
-            if (i == curIndex || p[i].flag == 1 || p[i].BT == 0)
-                continue;
-            rear = (rear + 1) % n;
-            p[i].flag = 1;
-            waitQueue[rear] = i;
+        if (p[exec].remainingTime > quantum) {
+            p[exec].remainingTime -= quantum;
+            elapsedTime += quantum;
+            printf("|(%d) P%d (%d)", elapsedTime - quantum, p[exec].processId, elapsedTime);
+        } else {
+            elapsedTime += p[exec].remainingTime;
+            printf("|(%d) P%d (%d)", elapsedTime - p[exec].remainingTime, p[exec].processId, elapsedTime);
+            p[exec].remainingTime = 0;
+            p[exec].completionTime = elapsedTime;
+            p[exec].turnAroundTime = p[exec].completionTime - p[exec].arrivalTime;
+            p[exec].waitingTime = p[exec].turnAroundTime - p[exec].burstTime;
+            totalTurnAroundTime += p[exec].turnAroundTime;
+            totalWaitingTime += p[exec].waitingTime;
+            totalResponseTime += p[exec].responseTime;
+            remainingProcesses--;
         }
 
-        if (p[curIndex].BT > 0) {
-            rear = (rear + 1) % n;
-            waitQueue[rear] = curIndex;
-        } else {
-            completed++;
+        // Add new processes to the queue
+        for (int i = 0; i < n && p[i].arrivalTime <= elapsedTime; i++) {
+            if (p[i].flag == 0 && p[i].remainingTime > 0) {
+                waitQueue[rear++] = i;
+                p[i].flag = 1;
+            }
+        }
+
+        // Re-queue the current process if it's not finished
+        if (p[exec].remainingTime > 0) {
+            waitQueue[rear++] = exec;
         }
     }
 
-    avg_TAT = (float)total_TAT / n;
-    avg_WT = (float)total_WT / n;
+    avgTurnAroundTime = (float)totalTurnAroundTime / n;
+    avgWaitingTime = (float)totalWaitingTime / n;
+    avgResponseTime = (float)totalResponseTime / n;
 
-    // Printing the table of processes with details
-    printf("\nPID\tAT\tBT\tCT\tTAT\tWT\n");
+    
+    printf("|\nObservation Table\nPID\tAT\tBT\tCT\tTAT\tWT\tRT\n");
     for (int i = 0; i < n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\t%d\n", p[i].Id, p[i].AT, tempBT[i], p[i].CT, p[i].TAT, p[i].WT);
+        printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\n", p[i].processId, p[i].arrivalTime, p[i].burstTime, p[i].completionTime, p[i].turnAroundTime, p[i].waitingTime, p[i].responseTime);
     }
 
-    printf("\nAverage TAT = %.2f\nAverage WT = %.2f\n", avg_TAT, avg_WT);
+    printf("\nAverage TAT = %.2f\nAverage WT = %.2f\nAverage RT = %.2f\n", avgTurnAroundTime, avgWaitingTime, avgResponseTime);
 }
