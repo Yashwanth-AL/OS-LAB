@@ -11,8 +11,7 @@ pthread_mutex_t mutex;
 int cnt = 1;
 int numreader = 0;
 
-void *writer(void *wno)
-{
+void *writer(void *wno) {
     sem_wait(&wrt);
     // Critical section for writers
     cnt = cnt * 2;
@@ -20,20 +19,20 @@ void *writer(void *wno)
     sem_post(&wrt);
 }
 
-void *reader(void *rno)
-{
-    // Reader acquires the lock before modifying numreader
-    pthread_mutex_lock(&mutex);
+void *reader(void *rno) {
+
+    pthread_mutex_lock(&mutex);// Reader acquires the lock before modifying numreader
     numreader++;
     if (numreader == 1) {
         sem_wait(&wrt); // If this is the first reader, it will block the writer
     }
     pthread_mutex_unlock(&mutex);
+
     // Reading Section
     printf("Reader %d: read cnt as %d\n", *((int *)rno), cnt);
 
-    // Reader acquires the lock before modifying numreader
-    pthread_mutex_lock(&mutex);
+    
+    pthread_mutex_lock(&mutex);// Reader acquires the lock before modifying numreader
     numreader--;
     if (numreader == 0) {
         sem_post(&wrt); // If this is the last reader, it will wake up the writer.

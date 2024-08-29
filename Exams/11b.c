@@ -16,8 +16,7 @@ int out = 0;
 int buffer[BufferSize];
 pthread_mutex_t mutex;
 
-void *producer(void *pno)
-{
+void *producer(void *pno) {
     for (int i = 0; i < MaxItems; i++) {
         int item = rand() % 100; // Produce a random item
         sem_wait(&empty);
@@ -30,8 +29,7 @@ void *producer(void *pno)
     }
 }
 
-void *consumer(void *cno)
-{
+void *consumer(void *cno) {
     for (int i = 0; i < MaxItems; i++) {
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
@@ -43,8 +41,7 @@ void *consumer(void *cno)
     }
 }
 
-int main()
-{
+int main() {
     pthread_t pro[3], con[3];
     pthread_mutex_init(&mutex, NULL);
     sem_init(&empty, 0, BufferSize);
